@@ -1,0 +1,37 @@
+// 文件变量
+@host = localhost
+@port = 3000
+
+
+### 新增 符合 RFC 2616 标准
+POST http://{{host}}:{{port}}/api/demo/create
+content-type: application/json
+
+{
+  "content": "一段测试文本内容"
+}
+
+### 删除 符合 RFC 2616 标准
+POST http://{{host}}:{{port}}/api/demo/delete
+content-type: application/json
+
+{
+  "id": 18
+}
+
+### 更新 符合 RFC 2616 标准
+POST http://{{host}}:{{port}}/api/demo/update
+content-type: application/json
+
+{
+  "id": 10,
+  "content": "更新了测试文本内容"
+}
+
+### api/demo/create 符合 cURL 标准
+curl -X POST "http://{{host}}:{{port}}/api/demo/create" -d "Hello World"
+
+
+
+### api/demo/getList
+GET http://{{host}}:{{port}}/api/demo/getList
