@@ -39,21 +39,21 @@ class NotFoundException extends ApiException {
 // 身份权限失败异常
 class AuthFailedException extends ApiException {
 	constructor(opt) {
-		super(opt, { msg: '身份权限校验失败', errorCode: 40003 });
+		super(opt, { msg: '身份权限校验失败', code: 4003 });
 	}
 }
 
 // 没有或无效 token，禁止访问异常
 class ForbiddenException extends ApiException {
 	constructor(opt) {
-		super(opt, { msg: '无效 token，禁止访问', errorCode: 40004 });
+		super(opt, { msg: '无效 token，禁止访问', code: 4004 });
 	}
 }
 
 // token 过期
 class TokenExpiredException extends ApiException {
 	constructor(opt) {
-		super(opt, { msg: 'token 过期，禁止访问', errorCode: 40005 });
+		super(opt, { msg: 'token 过期，禁止访问', code: 4005 });
 	}
 }
 
