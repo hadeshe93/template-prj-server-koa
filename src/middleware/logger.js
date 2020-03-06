@@ -12,8 +12,14 @@ const DEFAULT_RFS_CONFIG = {
 	},
 };
 
+// 自定义 token
+morgan.token('localDate',function getDate() {
+  let date = new Date();
+  return date.toLocaleString();
+});
+
 const LOG_FORMAT_DEV = ':method :url :status :response-time ms :res[content-length] :res[content-type]';
-const LOG_FORMAT_PRODUCTION = ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :res[content-type] ":referrer" ":user-agent"';
+const LOG_FORMAT_PRODUCTION = ':remote-addr - :remote-user [:localDate] ":method :url HTTP/:http-version" :status :res[content-length] :res[content-type] ":referrer" ":user-agent"';
 
 module.exports = function({ logFormat, logOptions = {}, rfsConfig = {} } = {}) {
   // 设置日志格式
