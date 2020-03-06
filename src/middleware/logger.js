@@ -1,8 +1,9 @@
 const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
 const path = require('path');
+const env = require('../lib/env');
 
-const defaultRfsConfig = {
+const DEFAULT_RFS_CONFIG = {
 	filename: 'access.log',
 	options: {
 		interval: '1d', // 按天滚动
@@ -11,15 +12,25 @@ const defaultRfsConfig = {
 	},
 };
 
-module.exports = function({ logFormat = 'combined', rfsConfig = {} } = {}) {
-	// 滚动日志实例
-	let accessLogStream = null;
+const LOG_FORMAT_DEV = ':method :url :status :response-time ms :res[content-length] :res[content-type]';
+const LOG_FORMAT_PRODUCTION = ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :res[content-type] ":referrer" ":user-agent"';
 
+module.exports = function({ logFormat, logOptions = {}, rfsConfig = {} } = {}) {
+  // 设置日志格式
+  if (!logFormat) {
+    logFormat = env.isDev 
+      ? LOG_FORMAT_DEV
+      : LOG_FORMAT_PRODUCTION;
+  }
+
+	// 滚动日志实例
+  let accessLogStream = null;
+  
 	if (rfsConfig) {
 		rfsConfig = {
 			...rfsConfig,
-			...defaultRfsConfig,
-		};
+			...DEFAULT_RFS_CONFIG,
+    };
 
 		accessLogStream = rfs.createStream(rfsConfig.filename, rfsConfig.options);
 	}
@@ -27,9 +38,9 @@ module.exports = function({ logFormat = 'combined', rfsConfig = {} } = {}) {
 	return async function(ctx, next) {
 		await next();
 
-		const logger = accessLogStream
-			? morgan(logFormat)
-			: morgan(logFormat, { stream: accessLogStream });
+		const logger = env.isDev
+			? morgan(logFormat, logOptions)
+			: morgan(logFormat, { ...logOptions, stream: accessLogStream });
 		const loggerPrms = new Promise((resolve, reject) => {
 			logger(ctx.req, ctx.res, function(err) {
 				if (err) {

@@ -24,9 +24,7 @@ app.use(
 
 // 日志中间件
 app.use(
-	Logger({
-		logFormat: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
-	}),
+	Logger(),
 );
 
 // 跨域请求中间件
