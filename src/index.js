@@ -1,5 +1,5 @@
 const Koa = require('koa');
-const KoaBody = require('koa-body');
+const KoaBodyParser = require('koa-bodyparser');
 const KoaCompress = require('koa-compress');
 const KoaCors = require('koa2-cors');
 const { Logger, CatchError } = require('./middleware');
@@ -15,16 +15,16 @@ const app = new Koa();
 // 错误中间件
 app.use(CatchError());
 
+// 日志中间件
+app.use(
+	Logger(),
+);
+
 // 响应压缩中间件
 app.use(
 	KoaCompress({
 		threshold: 2048,
 	}),
-);
-
-// 日志中间件
-app.use(
-	Logger(),
 );
 
 // 跨域请求中间件
@@ -40,22 +40,16 @@ app.use(
 	}),
 );
 
-// body 解析中间件
+// BODY 解析中间件
 app.use(
-	KoaBody({
-		// 是否支持 multipart-formdate 的表单
-		multipart: true,
-		formidable: {
-			// 是否支持多文件上传
-			multipart: true,
-			// 限制字段的最大大小
-			maxFieldsSize: 10 * 1024 * 1024,
-			// 文件上传文件夹
-			// uploadDir: './tempfile/',
-			// 保留原来的文件后缀
-			keepExtensions: true,
-		},
-	}),
+  KoaBodyParser({
+    extendTypes: {
+      json: ['text/plain', 'text/json', 'application/json'],
+    },
+    jsonLimit: '8mb',
+    textLimit: '8mb',
+    formLimit: '8mb',
+  }),
 );
 
 // 路由中间件
